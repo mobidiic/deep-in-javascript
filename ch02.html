@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <div id="div0">click Div0</div>
+  <div id="div1">click DIV1</div>
+  <div id="div2">click DIV2</div>
+  <button id="btnToggle">Toggle Pending</button>
+  <div id="divPending">Pending</div>
+  <script>
+    // var i=0;
+    // for (i=0; i<3; i++){
+    //   document.getElementById("div"+i).addEventListener("click", function(){
+    //     alert("You clicked"+i);
+    //   }, false);
+    // } 함수 호출 시 i 는 이미 3 (로드할때 해당 루프를 돌기 때문)
+
+    //스코프 실험
+    // for (var i=0; i<10; i++){
+    //   var total = (total ||0)+i;
+    //   var last = i;
+    //   if(total>16){
+    //     break;
+    //   }
+    // }
+    // console.log(total);//21
+    // console.log(last);//6 (i가 루프가 끝나고 +됨)
+
+    // function setDivClick(index){
+    //   document.getElementById('div'+index).addEventListener("click", function(){
+    //     alert("you clicked" +index);
+    //   }, false);
+    // }
+    // var i=0;
+    // for (i=0; i<3; i++){
+    //   setDivClick(i);
+    // }실행됨. 함수로 스코프를 나눴다.
+
+    for (var i=0; i<3; i++){
+      document.getElementById('div'+i).addEventListener("click", (function(index){
+        return function(){
+          alert("you clicked"+ index);
+        }
+      })(i))
+    }
+
+    // function outer(){
+    //   var count =0;
+    //   return {
+    //     increase : function(){
+    //       return ++count;
+    //     },
+    //     decrease : function(){
+    //       return --count;
+    //     }
+    //   };
+    // }
+    // var counter = outer();
+    // console.log(counter.increase());
+    // console.log(counter.decrease());
+    // var counter2 = outer();
+    // counter2.increase(); //counter2는 새로운 스코프를 가진다.
+
+    // var countFactory = (function(){
+    //   var staticCount =0;
+    //   return function(){
+    //     var localCount =0;
+    //     return {
+    //       increase : function(){
+    //         return {
+    //           staticCount : ++staticCount,
+    //           localCount : ++localCount
+    //         }
+    //       },
+    //       decrease : function(){
+    //         return {
+    //           staticCount : --staticCount,
+    //           localCount : --localCount
+    //         }
+    //       }
+    //     };
+    //   }
+    // })();
+    //
+    // function sum(base){
+    //   var inClosure = base;
+    //   return function(adder){
+    //     return inClosure + adder;
+    //   };
+    // };
+    // var fiveAdder = sum(5);//inClosure=5 and function
+    // fiveAdder(3);//8
+
+    (function(){
+      var pendingInterval = false;
+      var div = document.getElementById('divPending');
+      var btn = document.getElementById('btnToggle');
+
+      function startPending(){
+        if(div.innerHTML.length>13){
+          div.innerHTML = "Pending";
+        }else{
+          div.innerHTML += '.';
+        }
+      }
+
+      btn.addEventListener("click", function(){
+        if(!pendingInterval){
+          pendingInterval= setInterval(startPending, 500);
+        }else{
+          clearInterval(pendingInterval);
+          pendingInterval= false;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

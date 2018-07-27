@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+  #log{
+    height: 300px;
+    overflow-y: scroll;
+    font-size: 10px;
+  }
+  </style>
+</head>
+<body>
+  <div id="currentTime"></div>
+  <div id="internalClock"></div>
+  <button id="startClock">Start interval clock</button>
+  <button id="stopClock">Stop interval clock</button>
+  <button id="initiateClock">Initiate interval clock</button>
+  <button id="sleepFiveSeconds">Sleep 5 seconds</button>
+  <div id="log"></div>
+  <script>
+    (function(){
+      var divCurrentTime = document.getElementById("currentTime"),
+      divInternalClock = document.getElementById("internalClock"),
+      timePreviousClock = null,
+      idIntervalOneSecond = null,
+      divLog = document.getElementById("log"),
+      tmptime, previousInvokeTime, tmptime2,
+      funcIntervalTimeDiff= (function(){
+      //   return function(){
+      //     var diff;
+      //     if(previousInvokeTime ==null){
+      //       timePreviousClock = Date.now();
+      //       tmptime=Date.now()
+      //       diff=0;
+      //     }else{
+      //       diff=previousInvokeTime - Date.now();
+      //     }
+      //     tmptime=previousInvokeTime;
+      //     previousInvokeTime = Date.now();
+      //
+      //     divCurrentTime.innerHTML = new Date();
+      //     timePreviousClock = tmptime;
+      //     divInternalClock.innerHTML = new Date(timePreviousClock);
+      //     log("funcIntervalTimeDiff : "+Date.now()+" <> "+timePreviousClock);
+      //   };
+      // })();
+      return function(){
+        if( previousInvokeTime === null){
+          tmptime = Date.now();
+        }else{
+          tmptime=previousInvokeTime;
+        }
+        previousInvokeTime = Date.now();
+
+        divCurrentTime.innerHTML = new Date();
+        divInternalClock.innerHTML = new Date(tmptime);
+        log("funcIntervalTimeDiff : "+Date.now()+" <> "+timePreviousClock);
+        tmptime=Date.now();
+        tmptime2=Date.now();
+      };
+    })();
+
+      document.getElementById("startClock").addEventListener("click", startClock);
+      document.getElementById("stopClock").addEventListener("click", stopClock);
+      document.getElementById("initiateClock").addEventListener("click", initiateClock);
+      document.getElementById("sleepFiveSeconds").addEventListener("click", sleepFiveSeconds);
+
+      // function initiateClock(){
+      //   divCurrentTime.innerHTML = new Date();
+      //   timePreviousClock = Date.now();
+      //   divInternalClock.innerHTML= new Date(timePreviousClock);
+      //   log("initiateClock");
+      // }
+      function initiateClock(){
+        divCurrentTime.innerHTML = new Date();
+        divInternalClock.innerHTML= new Date(tmptime);
+        log("initiateClock");
+      }
+      function stopClock(){
+        if(idIntervalOneSecond !== null){
+          clearInterval(idIntervalOneSecond);
+          idIntervalOneSecond = null;
+          tmptime2=Date.now();
+        }
+        log("stopClock");
+      }
+      function startClock(){
+        if(idIntervalOneSecond ===null){
+          if(previousInvokeTime !== null){
+            previousInvokeTime = tmptime2;
+          }
+          idIntervalOneSecond = setInterval(funcIntervalTimeDiff, 2000);
+        }
+        log("startClock");
+      }
+      function sleepFiveSeconds(){
+        log("sleepFiveSeconds starts: " +new Date());
+        sleep(5000);
+        log("sleepFiveSeconds ends: "+ new Date());
+      }
+      function sleep(milisec){
+        var waitUntil = Date.now() + milisec;
+        while(Date.now() < waitUntil){;}
+      }
+      function log(logString){
+        var divLogLine = document.createElement("div");
+        divLogLine.appendChild(document.createTextNode(new Date() + ": "+ logString));
+        divLog.insertBefore(divLogLine, divLog.childNodes[0]);
+      }
+    })();
+  </script>
+</body>
+</html>
